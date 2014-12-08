@@ -3,13 +3,13 @@
 
 #getting flux fluxer from catalogue
 
-awk '{if($1=="#id"||$1=="#"){}else{print $28"\t"$29}}' ../goodss_3dhst.v4.1.cats/Catalog/goodss_3dhst.v4.1.cat > fluxfromcat.dat
+awk '{if($1=="#id"||$1=="#"){}else{print $6"\t"$7}}' ../goodss_3dhst.v4.1.cats/Catalog/goodss_3dhst.v4.1.cat > fluxfromcat.dat
 
 #getting XY coordinates and flux from radec
 
 rm tmp_all_X_Y tmp_cat
 
-sky2xy -v ../Optical/IMAGES/hlsp_xdf_hst_acswfc-30mas_hudf_f606w_v1_sci.fits @ra-dec2.dat | awk '{if (($1 !~/^\#/)&&($9)) {print $8, $9}}' > tmp_all_X_Y
+sky2xy -v ../intern/NIR/IMAGES/hlsp_xdf_hst_wfc3ir-60mas_hudf_f160w_v1_sci.fits @ra-dec2.dat | awk '{if (($1 !~/^\#/)&&($9)) {print $8, $9}}' > tmp_all_X_Y
 paste tmp_all_X_Y fluxfromcat.dat | awk '{print $1,$2,$3,$4}' > tmp_cat
 
 echo "VERBOSE = DEBUG"       >  asctoldac_tmp.conf
@@ -57,7 +57,7 @@ ldacfilter -i corrpol.cat -t OBJECTS -o test_filter.cat -c "((Xpos>0)AND(Ypos>0)
 
 rm test_mask.cat
 
-ldacaddmask -i test_filter.cat -t OBJECTS -o test_mask.cat -f tmp.reg.conv -n in_area -x Xpos Ypos
+ldacaddmask -i test_filter.cat -t OBJECTS -o test_mask.cat -f tmp.reg2.conv -n in_area -x Xpos Ypos
 
 #convert ldac to ascii format
 
@@ -73,18 +73,18 @@ cat blank.reg entries.reg > ds9_all3dhst.reg
 
 #open ds9
 
-ds9 ../Optical/IMAGES/hlsp_xdf_hst_acswfc-30mas_hudf_f606w_v1_sci.fits -scale mode zscale -regions load ds9_all3dhst.reg &
+ds9 ../intern/NIR/IMAGES/hlsp_xdf_hst_wfc3ir-60mas_hudf_f160w_v1_sci.fits -scale mode zscale -regions load ds9_all3dhst.reg &
 
 #APPHOT
 rm cat.dat appout mags.dat
 awk '{if($1=="#" || $3=="0"){}else{print $1"\t"$2}}' new_cat.dat > cat.dat
 
-python ../intern/apphot/apphot.py ../Optical/IMAGES/hlsp_xdf_hst_acswfc-30mas_hudf_f606w_v1_sci.fits cat.dat 23.33 appout
+python ../intern/apphot/apphot.py ../intern/NIR/IMAGES/hlsp_xdf_hst_wfc3ir-60mas_hudf_f160w_v1_sci.fits cat.dat 11.67 appout
 
-python ../intern/apphot/mag.py appout 25.00 magf606
+python ../intern/apphot/mag.py appout 25.00 magf160
 
 python ../intern/apphot/mag.py fluxfromcat.dat 25.00 mags.dat
 
-paste magf606 mags.dat | awk '{if($1=="#"){}else{print $1,$2,$3,$4}}' > magnitude606.dat
+paste magf160 mags.dat | awk '{if($1=="#"){}else{print $1,$2,$3,$4}}' > magnitude160.dat
 
 gnuplot
