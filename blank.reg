@@ -1,0 +1,4 @@
+# Region file format: DS9 version 4.1
+# Filename: hlsp_uvudf_hst_wfc3-uvis-30mas_udf-epoch3_f225w_v1.0_drz.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+IMAGE
